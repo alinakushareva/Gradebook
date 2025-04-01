@@ -21,9 +21,13 @@ public class Student extends User{
 	private Course course;
 	private FinalGrade finalG;
 	
+	private final String role;
+	
 	public Student(String firstName, String lastName, String userName, String password) {
-		// since Student extends User
-		super(userName, firstName, lastName, password);
+		role = "Student";
+		
+		// since Student extends User, calls to the User constructor to create the User object
+		super(userName, firstName, lastName, password, role);
 		
 		assignment = new Assignment();
 		grade = new Grade();
