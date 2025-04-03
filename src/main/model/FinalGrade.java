@@ -6,7 +6,7 @@
  *          Used for calculating student GPAs and storing course final grades.
  */
 
-package main.model;
+package model;
 
 public enum FinalGrade {
 	A(4.0), B(3.0), C(2.0), D(1.0), E(0.0);

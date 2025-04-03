@@ -5,7 +5,7 @@
  * Purpose: Represents a grade for an assignment, storing points earned and max possible points.  
  *          Provides percentage calculation and access to grade components.  
  */
-package main.model;
+package model;
 
 public class Grade {
     private final double pointsReceived;

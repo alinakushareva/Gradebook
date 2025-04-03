@@ -1,13 +1,10 @@
-package test.model;
+package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import main.model.Assignment;
-import main.model.Grade;
-import main.model.Student;
 
 class StudentTest {
 	

@@ -6,7 +6,7 @@
  *          Provides shared functionality and attributes for Student and Teacher subclasses.
  */
 
-package main.model;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;

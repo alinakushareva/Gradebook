@@ -1,9 +1,9 @@
-package test.model;
+package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import main.model.User;
+
 
 class UserTest {
     // Test data matching your User class

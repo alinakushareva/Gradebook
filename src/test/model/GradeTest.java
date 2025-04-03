@@ -1,8 +1,7 @@
-package test.model;
+package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import main.model.Grade;
 
 class GradeTest {
     private static final double VALID_POINTS = 85.0;

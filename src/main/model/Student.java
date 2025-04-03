@@ -5,7 +5,7 @@
  * Purpose: Stores all Student academic information such as assignments, grades, courses
  * 			and final grades.
  */
-package main.model;
+package model;
 import java.util.HashMap;
 import java.util.Map;
 
