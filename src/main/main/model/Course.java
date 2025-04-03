@@ -36,19 +36,19 @@ public class Course {
     public void assignFinalGrade(Student s, FinalGrade grade){}
 
 
-    public List<Assignment> getUngradedAssignments(){}
-
-
-    public double calculateMedianForAssignment(Assignment a){}
-
-
-    public double calculateStudentAverage(Student s){}
-
-
-    public List<Student> sortStudentsByName(){}
-
-
-    public List<Student> sortStudentsByGrade(Assignment a){}
+//    public List<Assignment> getUngradedAssignments(){}
+//
+//
+//    public double calculateMedianForAssignment(Assignment a){}
+//
+//
+//    public double calculateStudentAverage(Student s){}
+//
+//
+//    public List<Student> sortStudentsByName(){}
+//
+//
+//    public List<Student> sortStudentsByGrade(Assignment a){}
 
     public double calculateClassAverage() {
         double total = 0;

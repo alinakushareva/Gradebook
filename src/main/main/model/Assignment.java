@@ -1,5 +1,8 @@
 package main.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Assignment {
 	
 	private String title;
@@ -15,17 +18,17 @@ public class Assignment {
 		this.studentGrades = new HashMap<Student, Grade>();
 	}
 	
-	public void assignGrade(Student s, double points) {
-		for(Student name : this.studentGrades.keySet()) {
-			if(name.equals(s)) {
-				this.studentGrades.put(s,points);
-			}
-		}
-	}
-	
-	public Grade getGrade(Student s) {
-		
-	}
+//	public void assignGrade(Student s, double points) {
+//		for(Student name : this.studentGrades.keySet()) {
+//			if(name.equals(s)) {
+//				this.studentGrades.put(s,points);
+//			}
+//		}
+//	}
+//	
+//	public Grade getGrade(Student s) {
+//		
+//	}
 	
 
 	

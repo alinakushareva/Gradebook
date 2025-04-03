@@ -6,14 +6,9 @@
  * 			and final grades.
  */
 package main.model;
-
-public class Student {
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * This class represents a student and their grades.
- */
 public class Student extends User {
 	
 	private Map<Assignment, Grade> grades;
@@ -49,29 +44,41 @@ public class Student extends User {
 	 * searches for the grade of a specific assignment
 	 * @returns the Grade grade of the assignment
 	 */
-	public Grade getGrade(Assignment a) {
-		
-		for(Assignment aName : this.grades.keySet()) {
-			if(aName.equals(a)) {
-				return this.grades.values();
-			}
-		}
-	}
+//	public Grade getGrade(Assignment a) {
+//		
+//		for(Assignment aName : this.grades.keySet()) {
+//			if(aName.equals(a)) {
+//				return this.grades.values();
+//			}
+//		}
+//	}
 	
 	/*
 	 * gets the average for the course 
 	 * @returns the average of the course
 	 */
-	public double getAverageForCourse(Course c) {
-		return c.
-	}
+//	public double getAverageForCourse(Course c) {
+//		return c.
+//	}
 	
 	/*
 	 * calculates the GPA on the finalGrade of the course
 	 * @returns calculated GPA
 	 */
 	public double calculateGPA() {
-		this.finalGrades.values().getGpaValue();
+	    if (finalGrades.isEmpty()) {
+	        return 0.0;
+	    }
+	    
+	    double sum = 0.0;
+	    int count = 0;
+	    
+	    for (FinalGrade grade : finalGrades.values()) {
+	        sum += grade.getGpaValue();
+	        count++;
+	    }
+	    
+	    return (count > 0) ? (sum / count) : 0.0;
 	}
 	
 	/*
@@ -84,12 +91,12 @@ public class Student extends User {
 	/*
 	 * 
 	 */
-	public FinalGrade getFinalGrade(Course c) {
-		
-		for(Course course : this.finalGrades.keySet()) {
-			if(course.equals(c)) {
-				return this.finalGrades.values();
-			}
-		}
-	}
+//	public FinalGrade getFinalGrade(Course c) {
+//		
+//		for(Course course : this.finalGrades.keySet()) {
+//			if(course.equals(c)) {
+//				return this.finalGrades.values();
+//			}
+//		}
+//	}
 }

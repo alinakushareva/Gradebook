@@ -1,5 +1,7 @@
 package main.model;
 
+import java.util.List;
+
 public class Category {
   private String name;
   private double weight; //(0.0 to 1.0)
@@ -17,6 +19,8 @@ public class Category {
   public double getWeight(){
     return weight;
   }
-  public double calculateCategoryAverage(Student s){}
+//  public double calculateCategoryAverage(Student s){
+//	  
+//  }
 
 }

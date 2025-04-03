@@ -7,7 +7,6 @@ package main.model;
  * Purpose: Represents a teacher in the gradebook system.
  * Extends User and adds functionality for managing courses.
  */
-package main.model;
 
 import java.util.ArrayList;
 import java.util.List;

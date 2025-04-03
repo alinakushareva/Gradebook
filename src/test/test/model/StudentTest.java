@@ -2,9 +2,12 @@ package test.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.Student;
+import main.model.Assignment;
+import main.model.Grade;
+import main.model.Student;
 
 class StudentTest {
 	
@@ -23,7 +26,7 @@ class StudentTest {
 		s = new Student(userName, firstName, lastName, password);
 	}
 	
-	@Test
+
 	
 	
 }
