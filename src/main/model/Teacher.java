@@ -1,9 +1,11 @@
 package main.model;
 
 /*
- *
+ * Project Name: Gradebook
+ * File Name: User.java
+ * Course: CSC 335 Spring 2025
  * Purpose: Represents a teacher in the gradebook system.
- *          Extends User and adds functionality for managing courses.
+ * Extends User and adds functionality for managing courses.
  */
 package main.model;
 
