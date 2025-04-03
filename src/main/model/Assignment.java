@@ -16,18 +16,20 @@ public class Assignment {
 	}
 	
 	public void assignGrade(Student s, double points) {
-		
+		for(Student name : this.studentGrades.keySet()) {
+			if(name.equals(s)) {
+				this.studentGrades.put(s,points);
+			}
+		}
 	}
 	
 	public Grade getGrade(Student s) {
 		
 	}
 	
-	public double getAverage() {
-		
-	}
+
 	
-	public boolean isGraded(Student s) {
-		
-	}
+//	public boolean isGraded(Student s) {
+//		
+//	}
 }
