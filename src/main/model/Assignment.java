@@ -1,38 +1,67 @@
 package model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents an academic assignment within a course.
+ * Tracks grades for students enrolled in the associated course.
+ */
 public class Assignment {
-	
-	private String title;
-	private double maxPoints;
-	private String category;
-	private Map<Student, Grade> studentGrades;
-	
-	public Assignment(String aName, double points, String category) {
-		this.title = aName;
-		this.maxPoints = points;
-		this.category = category;
-		
-		this.studentGrades = new HashMap<Student, Grade>();
-	}
-	
-//	public void assignGrade(Student s, double points) {
-//		for(Student name : this.studentGrades.keySet()) {
-//			if(name.equals(s)) {
-//				this.studentGrades.put(s,points);
-//			}
-//		}
-//	}
-//	
-//	public Grade getGrade(Student s) {
-//		
-//	}
-	
+    private final String title;
+    private final double maxPoints;
+    private final Map<Student, Grade> studentGrades;
 
-	
-//	public boolean isGraded(Student s) {
-//		
-//	}
+    public Assignment(String title, double maxPoints) {
+        this.title = title;
+        this.maxPoints = maxPoints;
+        this.studentGrades = new HashMap<>();
+    }
+
+    /**
+     * Assigns a grade to a student for this assignment
+     * @param student The student to grade
+     * @param points Points earned (must be ≤ maxPoints)
+     * @throws IllegalArgumentException if points exceed maxPoints
+     */
+    public void assignGrade(Student student, double points) {
+        if (points > maxPoints) {
+            throw new IllegalArgumentException(
+                "Points cannot exceed maximum (" + maxPoints + ")"
+            );
+        }
+        studentGrades.put(student, new Grade(points, maxPoints));
+    }
+
+    /**
+     * Retrieves a student's grade for this assignment
+     * @return Grade object (returns 0/MAX if ungraded)
+     */
+    public Grade getGrade(Student student) {
+        return studentGrades.getOrDefault(student, new Grade(0, maxPoints));
+    }
+
+    /**
+     * Checks if all students in a course have been graded
+     * @param courseStudents List of students enrolled in the course
+     * @return true if all students have grades
+     */
+    public boolean isFullyGraded(List<Student> courseStudents) {
+        return courseStudents.stream()
+            .allMatch(studentGrades::containsKey);
+    }
+
+    // Getters
+    public String getTitle() {
+        return title;
+    }
+
+    public double getMaxPoints() {
+        return maxPoints;
+    }
+
+    public Map<Student, Grade> getStudentGrades() {
+        return new HashMap<>(studentGrades);
+    }
 }

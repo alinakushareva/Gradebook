@@ -8,6 +8,8 @@
 package model;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+
 
 public class Student extends User {
 	
@@ -27,8 +29,8 @@ public class Student extends User {
 		
 		super(userName, firstName, lastName, password, "Student");
 		
-		this.grades = new HashMap<Assignment, Grade>();
-		this.finalGrades = new HashMap<Course, FinalGrade>();
+		this.grades = new HashMap<>();
+		this.finalGrades = new HashMap<>();
 		
 	}
 	
@@ -36,67 +38,72 @@ public class Student extends User {
 	 * adds the graded assignment to the Student
 	 * @returns 
 	 */
-	public void addGrade(Assignment a, Grade g) {
-		this.grades.put(a, g);
+	public void addGrade(Assignment assignment, Grade grade) {
+        grades.put(assignment, grade);
 	}
 	
 	/*
 	 * searches for the grade of a specific assignment
 	 * @returns the Grade grade of the assignment
 	 */
-//	public Grade getGrade(Assignment a) {
-//		
-//		for(Assignment aName : this.grades.keySet()) {
-//			if(aName.equals(a)) {
-//				return this.grades.values();
-//			}
-//		}
-//	}
+	public Grade getGrade(Assignment assignment) {
+		return grades.get(assignment);
+	}
 	
 	/*
 	 * gets the average for the course 
 	 * @returns the average of the course
 	 */
-//	public double getAverageForCourse(Course c) {
-//		return c.
-//	}
+	public double getAverageForCourse(Course course) {
+        List<Assignment> courseAssignments = course.getAssignments();
+        double totalEarned = 0;
+        double totalPossible = 0;
+        
+        for (Assignment assignment : courseAssignments) {
+            Grade grade = grades.get(assignment);
+            if (grade != null && grade.getMaxPoints() > 0) {
+                totalEarned += grade.getPointsReceived();
+                totalPossible += grade.getMaxPoints();
+            }
+        }
+        
+        return totalPossible > 0 ? (totalEarned / totalPossible) * 100 : 0.0;
+    }
 	
 	/*
 	 * calculates the GPA on the finalGrade of the course
 	 * @returns calculated GPA
 	 */
 	public double calculateGPA() {
-	    if (finalGrades.isEmpty()) {
-	        return 0.0;
-	    }
-	    
-	    double sum = 0.0;
-	    int count = 0;
-	    
-	    for (FinalGrade grade : finalGrades.values()) {
-	        sum += grade.getGpaValue();
-	        count++;
-	    }
-	    
-	    return (count > 0) ? (sum / count) : 0.0;
-	}
+        if (finalGrades.isEmpty()) return 0.0;
+        
+        double total = finalGrades.values().stream()
+            .mapToDouble(FinalGrade::getGpaValue)
+            .sum();
+            
+        return total / finalGrades.size();
+    }
 	
 	/*
 	 * 
 	 */
-	public void assignFinalGrade(Course c, FinalGrade g) {
-		this.finalGrades.put(c, g);
-	}
+	public void assignFinalGrade(Course course, FinalGrade grade) {
+        finalGrades.put(course, grade);
+    }
 	
 	/*
 	 * 
 	 */
-//	public FinalGrade getFinalGrade(Course c) {
-//		
-//		for(Course course : this.finalGrades.keySet()) {
-//			if(course.equals(c)) {
-//				return this.finalGrades.values();
-//			}
-//		}
-//	}
+	public FinalGrade getFinalGrade(Course course) {
+        return finalGrades.getOrDefault(course, null);
+    }
+	
+	// Additional accessors
+    public Map<Assignment, Grade> getGrades() {
+        return new HashMap<>(grades);
+    }
+
+    public Map<Course, FinalGrade> getFinalGrades() {
+        return new HashMap<>(finalGrades);
+    }
 }
