@@ -1,26 +1,55 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Category {
-  private String name;
-  private double weight; //(0.0 to 1.0)
-  private List<Assignment> assignments;
-  private int dropLowestCount;//Number of lowest grades to drop
+    private final String name;
+    private final double weight;
+    private final List<Assignment> assignments;
+    private int dropLowestCount;
 
-  public Category(){
-    this.weight = weight;
-    this.name = name;
-  }
-  public void addAssignment(Assignment a){}
-  public List<Assignment> getAssignments(){
-    return assignments;
-  }
-  public double getWeight(){
-    return weight;
-  }
-//  public double calculateCategoryAverage(Student s){
-//	  
-//  }
+    public Category(String name, double weight) {
+        this.name = name;
+        this.weight = weight;
+        this.assignments = new ArrayList<>();
+        this.dropLowestCount = 0;
+    }
 
+    /**
+     * Calculates the student's average for this category
+     */
+    public double calculateCategoryAverage(Student student) {
+        List<Grade> grades = assignments.stream()
+            .map(a -> a.getGrade(student))
+            .sorted()
+            .collect(Collectors.toList());
+
+        // Drop lowest grades if configured
+        if (dropLowestCount > 0 && !grades.isEmpty()) {
+            grades = grades.subList(
+                Math.min(dropLowestCount, grades.size()), 
+                grades.size()
+            );
+        }
+
+        return grades.stream()
+            .mapToDouble(Grade::getPercentage)
+            .average()
+            .orElse(0.0) * weight;
+    }
+
+    // Getters and setters
+    public double getWeight() { 
+    	return weight; 
+    }
+    
+    public void setDropLowestCount(int count) { 
+    	dropLowestCount = count; 
+    }
+    
+    public void addAssignment(Assignment assignment) { 
+    	assignments.add(assignment); 
+    }
 }

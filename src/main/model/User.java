@@ -52,6 +52,22 @@ public abstract class User {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+    
+    /**
+     * Gets the user's first name 
+     * @return String representing the first name
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * Gets the user's last name 
+     * @return String representing the last name
+     */
+    public String getLastName() {
+        return lastName;
+    }
 
     /**
      * Gets the user's role.
