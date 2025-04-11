@@ -126,4 +126,8 @@ public class Course {
   public FinalGrade getFinalGrade(Student student) {
       return finalGrades.getOrDefault(student, null);
   }
+  
+  public boolean isCompleted(Student student) {
+      return student.getFinalGrade(this) != null;
+  }
 }

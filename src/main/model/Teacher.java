@@ -1,5 +1,7 @@
 package model;
 
+import java.io.IOException;
+
 /*
  * Project Name: Gradebook
  * File Name: User.java
@@ -9,7 +11,10 @@ package model;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import util.FileUtil;
 
 public class Teacher extends User {
     private List<Course> teachingCourses;
@@ -51,5 +56,20 @@ public class Teacher extends User {
      */
     public List<Course> getTeachingCourses() {
         return new ArrayList<>(teachingCourses); // Return a copy for encapsulation
+    }
+    
+    public void createCourse(String courseName) {
+        Course course = new Course(courseName);
+        this.addCourse(course);
+        // Persist to file
+        try {
+            FileUtil.saveCourses(Collections.singletonList(course), "courses.txt");
+        } catch (IOException e) {
+            System.err.println("Failed to save course");
+        }
+    }
+
+    public void enrollStudent(Course course, Student student) {
+        course.addStudent(student);
     }
 }

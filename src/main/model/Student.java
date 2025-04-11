@@ -95,7 +95,7 @@ public class Student extends User {
 	 * 
 	 */
 	public FinalGrade getFinalGrade(Course course) {
-        return finalGrades.getOrDefault(course, null);
+	    return finalGrades.get(course);
     }
 	
 	// Additional accessors

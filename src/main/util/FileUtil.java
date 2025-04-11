@@ -117,4 +117,31 @@ public class FileUtil {
     public static void writeLines(String filePath, List<String> lines) throws IOException {
         Files.write(Paths.get(filePath), lines);
     }
+    
+    public static void saveCourses(List<Course> courses, String filePath) throws IOException {
+        List<String> lines = courses.stream()
+            .map(c -> c.getCourseName() + "," + String.join(",", 
+                c.getStudents().stream()
+                    .map(Student::getUsername)
+                    .toList()))
+            .toList();
+        Files.write(Paths.get(filePath), lines);
+    }
+
+    public static List<Course> loadCourses(String filePath, UserManager userManager) throws IOException {
+        return Files.readAllLines(Paths.get(filePath)).stream()
+            .map(line -> {
+                String[] parts = line.split(",");
+                Course course = new Course(parts[0]);
+                Arrays.stream(parts).skip(1)
+                    .forEach(username -> {
+                        User user = userManager.findUserByUsername(username);
+                        if (user instanceof Student) {
+                            course.addStudent((Student) user);
+                        }
+                    });
+                return course;
+            })
+            .toList();
+    }
 }

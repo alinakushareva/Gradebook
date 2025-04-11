@@ -13,6 +13,8 @@ import java.util.List;
 public class UserManager {
     private List<User> users;
     private final String userFilePath;
+    private List<Course> courses = new ArrayList<>();
+
     
     /**
      * Constructor for UserManager class.
@@ -119,4 +121,12 @@ public class UserManager {
     public List<User> getAllUsers() {
         return new ArrayList<>(users);
     }  
+    
+    public void addCourse(Course course) {
+        courses.add(course);
+    }
+    
+    public List<Course> getAllCourses() {
+        return new ArrayList<>(courses);
+    }
 } 

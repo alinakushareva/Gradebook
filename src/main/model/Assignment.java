@@ -26,12 +26,12 @@ public class Assignment {
      * @throws IllegalArgumentException if points exceed maxPoints
      */
     public void assignGrade(Student student, double points) {
-        if (points > maxPoints) {
-            throw new IllegalArgumentException(
-                "Points cannot exceed maximum (" + maxPoints + ")"
-            );
+        if(points > maxPoints) {
+            throw new IllegalArgumentException("Points exceed maximum");
         }
-        studentGrades.put(student, new Grade(points, maxPoints));
+        Grade grade = new Grade(points, maxPoints);
+        student.addGrade(this, grade);
+        studentGrades.put(student, grade);
     }
 
     /**
@@ -50,6 +50,10 @@ public class Assignment {
     public boolean isFullyGraded(List<Student> courseStudents) {
         return courseStudents.stream()
             .allMatch(studentGrades::containsKey);
+    }
+    
+    public boolean isGraded(Student student) {
+        return student.getGrade(this) != null;
     }
 
     // Getters
