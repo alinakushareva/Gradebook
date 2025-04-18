@@ -24,6 +24,39 @@ class StudentTest {
 	}
 	
 	@Test
+<<<<<<< Updated upstream
 	
 	
 }
+=======
+	void constructor_setUsername() {
+		assertEquals(userName,s.getUsername());
+	}
+	
+	@Test
+	void constructor_sestPasswordHash() {
+		assertEquals(password, s.getPasswordHash());
+	}
+	
+	@Test
+	void constructor_ReturnsFullName() {
+		assertEquals("Alex Russo", s.getFullName());
+	}
+	
+	@Test
+	void constructor_role() {
+		asserEquals("Student", s.getRole());
+	}
+	
+	
+	@Test
+	void testAddGrade() {		
+		g = new Grade(20.0,20.0);
+		a = new Assignment("Quiz 1", 20.0);
+		
+		s.addGrade(a, g);
+		
+		
+	}
+}
+>>>>>>> Stashed changes
