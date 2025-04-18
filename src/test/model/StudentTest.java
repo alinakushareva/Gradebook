@@ -1,10 +1,10 @@
-package test.model;
+package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.Student;
 
 class StudentTest {
 	
@@ -24,39 +24,21 @@ class StudentTest {
 	}
 	
 	@Test
-<<<<<<< Updated upstream
-	
-	
-}
-=======
-	void constructor_setUsername() {
-		assertEquals(userName,s.getUsername());
-	}
-	
-	@Test
-	void constructor_sestPasswordHash() {
+	void constructor_test() {
+		assertEquals(userName, s.getUsername());
 		assertEquals(password, s.getPasswordHash());
-	}
-	
-	@Test
-	void constructor_ReturnsFullName() {
 		assertEquals("Alex Russo", s.getFullName());
+		assertEquals("Student", s.getRole());
+		
 	}
-	
+
 	@Test
-	void constructor_role() {
-		asserEquals("Student", s.getRole());
-	}
-	
-	
-	@Test
-	void testAddGrade() {		
-		g = new Grade(20.0,20.0);
+	void addGradeTest() {
+		g = new Grade(20.0, 20.0);
 		a = new Assignment("Quiz 1", 20.0);
 		
-		s.addGrade(a, g);
-		
-		
+		s.addGrade(a,g);
+		assertEquals("Quiz 1", )
 	}
+	
 }
->>>>>>> Stashed changes
