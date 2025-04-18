@@ -2,39 +2,15 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-<<<<<<< Updated upstream
-=======
 import java.util.List;
 
->>>>>>> Stashed changes
 import org.junit.jupiter.api.Test;
 
 class AssignmentTest {
-	
-<<<<<<< Updated upstream
-	private static final String firstName = "Alex";
-	private static final String lastName = "Russo";
-	private static final String userName = "aRusso";
-	private static final String password = "Wizards123";
-	
-	private Assignment a, b;
-	private Student s;
-	
-	
-	@BeforeEach
-	void constructor_Assignment() {
-		a = new Assignment("Quiz 1", 25.0);
-		b = new Assignment("Exam 1", 75.0);
-		s = new Student(firstName, lastName, userName, password);
 
-	}
-
-	@Test
-	void getGradeTest() {
-		
-=======
 	private Assignment a1, a2, a3;
 	private Student s1, s2;
+	
 	@BeforeEach
 	void setUp() {
 		a1 = new Assignment("SA1", 25.0);
@@ -112,6 +88,5 @@ class AssignmentTest {
 		assertThrows(IllegalArgumentException.class, () ->{
 			assignment.assignGrade(s2, 40.0);
 		});
->>>>>>> Stashed changes
 	}
 }
