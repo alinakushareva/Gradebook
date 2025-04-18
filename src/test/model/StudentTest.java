@@ -27,23 +27,6 @@ class StudentTest {
 	}
 	
 	@Test
-<<<<<<< Updated upstream
-	void constructor_test() {
-		assertEquals(userName, s.getUsername());
-		assertEquals(password, s.getPasswordHash());
-		assertEquals("Alex Russo", s.getFullName());
-		assertEquals("Student", s.getRole());
-		
-	}
-
-	@Test
-	void addGradeTest() {
-		g = new Grade(20.0, 20.0);
-		a = new Assignment("Quiz 1", 20.0);
-		
-		s.addGrade(a,g);
-		assertEquals("Quiz 1", )
-=======
 	void testAddGrade() {
 		Grade g = new Grade(15.0, 25.0);
 		student.addGrade(a1, g);
@@ -57,7 +40,6 @@ class StudentTest {
 	@Test
 	void testGetGradeNotAssigned() {
 		assertNull(student.getGrade(a1));
->>>>>>> Stashed changes
 	}
 	
 	@Test
