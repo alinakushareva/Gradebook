@@ -7,7 +7,6 @@
  */
 package main.model;
 
-public class Student {
 import java.util.HashMap;
 import java.util.Map;
 
