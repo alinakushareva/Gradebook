@@ -10,6 +10,9 @@ package view;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.Student;
+import model.Teacher;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,4 +98,13 @@ public class MainView {
         setScene(initialSceneName);
         primaryStage.show();
     }
+    
+    public void showStudentDashboard(Student student) {
+        setScene("studentDashboard");
+    }
+
+    public void showTeacherDashboard(Teacher teacher) {
+        setScene("teacherDashboard");
+    }
+
 }
