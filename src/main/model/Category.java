@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ public class Category {
     public double calculateCategoryAverage(Student student) {
         List<Grade> grades = assignments.stream()
             .map(a -> a.getGrade(student))
-            .sorted()
+            .sorted(Comparator.comparingDouble(Grade::getPercentage)) 
             .collect(Collectors.toList());
 
         // Drop lowest grades if configured
@@ -39,6 +40,7 @@ public class Category {
             .average()
             .orElse(0.0) * weight;
     }
+
 
     // Getters and setters
     public double getWeight() { 
