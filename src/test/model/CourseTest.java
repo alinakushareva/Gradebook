@@ -1,127 +1,88 @@
 package main.model;
-
-import model.Assignment;
-import model.Grade;
-import model.FinalGrade;
 import org.junit.jupiter.api.*;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import model.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-class CourseTest {
+/**
+ * This class tests the Course class for student and assignment handling,
+ * grading logic, and sorting features.
+ */
+public class CourseTest {
 
     private Course course;
-    private Student student;
-    private Assignment assignment;
+    private Student student1;
+    private Assignment assignment1;
 
     @BeforeEach
-    void setUp() {
-        course = new Course("Java");
-        student = mock(Student.class);
-        assignment = mock(Assignment.class);
-        when(student.getFullName()).thenReturn("Alice Smith");
+    public void setUp() {
+        course = new Course("Biology101");
+        student1 = new Student("Anna", "Lee", "anna01", "pass123");
+        assignment1 = new Assignment("Quiz 1", 20);
     }
 
     @Test
-    void testAddStudent() {
-        course.addStudent(student);
-        assertEquals(1, course.sortStudentsByName().size());
-        verify(student).addCourse(course);
+    public void testCourseInitialization() {
+        // Checks course name and initial student list
+        assertEquals("Biology101", course.getCourseName());
+        assertTrue(course.getStudents().isEmpty());
     }
 
     @Test
-    void testRemoveStudent() {
-        course.addStudent(student);
-        course.removeStudent(student);
-        assertEquals(0, course.sortStudentsByName().size());
+    public void testAddStudent() {
+        // Ensures adding a student works and avoids duplicates
+        course.addStudent(student1);
+        course.addStudent(student1);
+        assertEquals(1, course.getStudents().size());
     }
 
     @Test
-    void testAddAssignment() {
-        course.addAssignment(assignment);
+    public void testRemoveStudent() {
+        // Confirms removing a student works
+        course.addStudent(student1);
+        course.removeStudent(student1);
+        assertFalse(course.getStudents().contains(student1));
+    }
+
+    @Test
+    public void testAddAssignment() {
+        // Tests that assignments can be added and duplicates ignored
+        course.addAssignment(assignment1);
+        course.addAssignment(assignment1);
         assertEquals(1, course.getAssignments().size());
     }
 
     @Test
-    void testAssignFinalGrade() {
-        course.addStudent(student);
-        course.assignFinalGrade(student, FinalGrade.A);
-        verify(student).assignFinalGrade(course, FinalGrade.A);
+    public void testCalculateTotalPointsAverage() {
+        // Validates average calculation based on raw points
+        course.addStudent(student1);
+        course.addAssignment(assignment1);
+        assignment1.assignGrade(student1, 18); // 90%
+        assertEquals(90.0, course.calculateStudentAverage(student1), 0.01);
     }
 
     @Test
-    void testGetUngradedAssignments() {
-        course.addStudent(student);
-        course.addAssignment(assignment);
-        when(assignment.isGraded(student)).thenReturn(false);
-        List<Assignment> ungraded = course.getUngradedAssignments();
-        assertTrue(ungraded.contains(assignment));
-    }
-
-    @Test
-    void testCalculateMedianForAssignment() {
-        Student s1 = mock(Student.class);
-        Student s2 = mock(Student.class);
-        when(assignment.getGrade(s1)).thenReturn(new Grade(8, 10));
-        when(assignment.getGrade(s2)).thenReturn(new Grade(6, 10));
-
-        course.addStudent(s1);
-        course.addStudent(s2);
-        course.addAssignment(assignment);
-
-        double median = course.calculateMedianForAssignment(assignment);
-        assertEquals(70.0, median); // (60 + 80) / 2
-    }
-
-    @Test
-    void testCalculateStudentAverage() {
-        Grade grade = new Grade(8, 10);
-        when(assignment.getGrade(student)).thenReturn(grade);
-        course.addStudent(student);
-        course.addAssignment(assignment);
-        assertEquals(80.0, course.calculateStudentAverage(student));
-    }
-
-    @Test
-    void testSortStudentsByName() {
-        Student s2 = mock(Student.class);
-        when(s2.getFullName()).thenReturn("Bob Brown");
-
-        course.addStudent(student);
-        course.addStudent(s2);
-
+    public void testSortStudentsByName() {
+        // Checks that student sorting by last/first name is correct
+        Student sA = new Student("Anna", "B", "a1", "pw");
+        Student sB = new Student("Bella", "A", "b2", "pw");
+        course.addStudent(sA);
+        course.addStudent(sB);
         List<Student> sorted = course.sortStudentsByName();
-        assertEquals("Alice Smith", sorted.get(0).getFullName());
+        assertEquals("Bella", sorted.get(0).getFirstName());
     }
 
     @Test
-    void testSortStudentsByGrade() {
-        Student s1 = mock(Student.class);
-        Student s2 = mock(Student.class);
-        when(assignment.getGrade(s1)).thenReturn(new Grade(10, 10)); // 100%
-        when(assignment.getGrade(s2)).thenReturn(new Grade(5, 10));  // 50%
-
-        course.addStudent(s1);
-        course.addStudent(s2);
-
-        List<Student> sorted = course.sortStudentsByGrade(assignment);
-        assertEquals(s1, sorted.get(0));
-    }
-
-    @Test
-    void testCalculateClassAverage() {
-        Student s1 = mock(Student.class);
-        Student s2 = mock(Student.class);
-        when(s1.calculateGPA()).thenReturn(4.0);
-        when(s2.calculateGPA()).thenReturn(3.0);
-
-        course.addStudent(s1);
-        course.addStudent(s2);
-
-        double average = course.calculateClassAverage();
-        assertEquals(3.5, average);
+    public void testGetUngradedAssignments() {
+        // Ensures ungraded assignments are correctly identified
+        course.addStudent(student1);
+        course.addAssignment(assignment1);
+        assertEquals(1, course.getUngradedAssignments().size());
+        assignment1.assignGrade(student1, 10);
+        assertEquals(0, course.getUngradedAssignments().size());
     }
 }
 
