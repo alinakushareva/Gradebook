@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class SecurityUtilTest {
 
+	
     @Test
     void hashPassword_ProducesConsistentOutput() {
         String hash1 = SecurityUtil.hashPassword("AlinaKushareva123!");
@@ -116,4 +117,7 @@ class SecurityUtilTest {
         assertTrue(regex.contains("(?=.*[!@#$%^&*])"));  // Special char requirement
         assertTrue(regex.contains("\\S+"));  // No whitespace requirement
     }
+    
+    
+    
 }
