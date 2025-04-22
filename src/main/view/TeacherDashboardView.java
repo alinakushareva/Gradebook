@@ -9,63 +9,78 @@ import javafx.scene.text.Font;
 import model.*;
 
 import java.util.List;
-
-public class TeacherDashboardView {
-    private final ListView<Course> courseList = new ListView<>();
-    private final Button addAssignmentButton = new Button("Add Assignment");
-    private final Button importStudentsButton = new Button("Import Students");
-    private final Button assignGradeButton = new Button("Assign Grade");
-    private final Button viewUngradedButton = new Button("View Ungraded");
-    private final Button calculateStatsButton = new Button("Class Stats");
+public class CourseDetailView {
+    private final Label courseNameLabel = new Label();
+    private final TableView<Assignment> assignmentTable = new TableView<>();
     private final TableView<Student> studentTable = new TableView<>();
+    private final Button sortByNameButton = new Button("Sort by Name");
+    private final Button sortByGradeButton = new Button("Sort by Grade");
+    private final Button assignFinalGradesButton = new Button("Assign Final Grades");
     private final Scene scene;
 
-    public TeacherDashboardView(TeacherController controller) {
-        Label title = new Label("Teacher Dashboard");
-        title.setFont(new Font(20));
+    /**
+     * Constructs the detailed course view.
+     * Displays assignments and students, with grading tools.
+     */
+    public CourseDetailView(Course course, TeacherController controller) {
+        courseNameLabel.setText("Course: " + course.getCourseName());
+        courseNameLabel.setFont(new Font(18));
 
-        VBox leftPane = new VBox(10, title, courseList, addAssignmentButton, importStudentsButton,
-                assignGradeButton, viewUngradedButton, calculateStatsButton);
-        leftPane.setPadding(new Insets(10));
-        leftPane.setPrefWidth(300);
+        // Button Actions
+        sortByNameButton.setOnAction(e -> {
+            List<Student> sorted = controller.sortStudentsByName(course);
+            updateStudents(sorted);
+        });
 
-        VBox rightPane = new VBox(new Label("Students"), studentTable);
-        rightPane.setPadding(new Insets(10));
-        studentTable.setPrefHeight(400);
+        sortByGradeButton.setOnAction(e -> {
+            if (!assignmentTable.getItems().isEmpty()) {
+                Assignment selected = assignmentTable.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    List<Student> sorted = controller.sortStudentsByAssignmentGrade(course, selected);
+                    updateStudents(sorted);
+                }
+            }
+        });
 
-        HBox root = new HBox(leftPane, rightPane);
-        scene = new Scene(root, 1000, 600);
+        assignFinalGradesButton.setOnAction(e -> {
+            for (Student s : course.getStudents()) {
+                double average = course.calculateStudentAverage(s);
+                FinalGrade fg = GradeCalculator.getLetterGrade(average);
+                controller.assignFinalGrade(course, s, fg);
+            }
+            updateStudents(course.getStudents()); // refresh
+        });
+
+        VBox layout = new VBox(10, courseNameLabel, assignmentTable, studentTable, 
+                               new HBox(10, sortByNameButton, sortByGradeButton, assignFinalGradesButton));
+        layout.setPadding(new Insets(15));
+        scene = new Scene(layout, 900, 600);
     }
 
     public Scene getScene() {
         return scene;
     }
 
-    public void updateCourseList(List<Course> courses) {
-        courseList.getItems().setAll(courses);
+    /**
+     * Refreshes the list of assignments in the table view.
+     */
+    public void updateAssignments(List<Assignment> assignments) {
+        assignmentTable.getItems().setAll(assignments);
     }
 
-    public void updateStudentTable(List<Student> students) {
+    /**
+     * Refreshes the list of students in the table view.
+     */
+    public void updateStudents(List<Student> students) {
         studentTable.getItems().setAll(students);
     }
 
-    public void showUngradedAssignments(List<Assignment> ungraded) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Ungraded Assignments");
-        alert.setHeaderText("Assignments needing grading:");
-        StringBuilder sb = new StringBuilder();
-        for (Assignment a : ungraded) {
-            sb.append(a.getTitle()).append("\n");
-        }
-        alert.setContentText(sb.toString());
-        alert.showAndWait();
-    }
-
-    public void showClassStats(double avg, double median) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Class Stats");
-        alert.setHeaderText("Class Average and Median");
-        alert.setContentText("Average: " + avg + "%\nMedian: " + median + "%");
-        alert.showAndWait();
+    /**
+     * Loads course-specific content into view.
+     */
+    public void displayCourseInfo(Course course) {
+        courseNameLabel.setText("Course: " + course.getCourseName());
+        updateAssignments(course.getAssignments());
+        updateStudents(course.getStudents());
     }
 }
