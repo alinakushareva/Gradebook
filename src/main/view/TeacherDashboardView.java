@@ -4,68 +4,60 @@ import controller.TeacherController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import model.*;
+import model.Course;
+import model.Teacher;
 
 import java.util.List;
 
+/**
+ * TeacherDashboardView provides a visual overview for teachers,
+ * allowing them to view their courses and access course details.
+ */
 public class TeacherDashboardView {
-    private final ListView<Course> courseList = new ListView<>();
-    private final Button addAssignmentButton = new Button("Add Assignment");
-    private final Button importStudentsButton = new Button("Import Students");
-    private final Button assignGradeButton = new Button("Assign Grade");
-    private final Button viewUngradedButton = new Button("View Ungraded");
-    private final Button calculateStatsButton = new Button("Class Stats");
-    private final TableView<Student> studentTable = new TableView<>();
+
+    private final ListView<Course> courseListView = new ListView<>();
+    private final Button viewCourseButton = new Button("View Selected Course");
+    private final Label welcomeLabel = new Label();
     private final Scene scene;
 
-    public TeacherDashboardView(TeacherController controller) {
-        Label title = new Label("Teacher Dashboard");
-        title.setFont(new Font(20));
+    /**
+     * Constructs the teacher dashboard view.
+     *
+     * @param teacher The currently logged-in teacher
+     * @param controller The controller for teacher operations
+     * @param mainView The main view used for switching scenes
+     */
+    public TeacherDashboardView(Teacher teacher, TeacherController controller, MainView mainView) {
+        welcomeLabel.setText("Welcome, " + teacher.getFullName());
+        welcomeLabel.setFont(new Font(20));
 
-        VBox leftPane = new VBox(10, title, courseList, addAssignmentButton, importStudentsButton,
-                assignGradeButton, viewUngradedButton, calculateStatsButton);
-        leftPane.setPadding(new Insets(10));
-        leftPane.setPrefWidth(300);
+        // Populate the course list from controller
+        List<Course> courses = controller.getTeachingCourses();
+        courseListView.getItems().setAll(courses);
 
-        VBox rightPane = new VBox(new Label("Students"), studentTable);
-        rightPane.setPadding(new Insets(10));
-        studentTable.setPrefHeight(400);
+        // Set up button logic to navigate to CourseDetailView
+        viewCourseButton.setOnAction(e -> {
+            Course selectedCourse = courseListView.getSelectionModel().getSelectedItem();
+            if (selectedCourse != null) {
+                CourseDetailView detailView = new CourseDetailView(selectedCourse, controller);
+                mainView.setScene("courseDetail", detailView.getScene());
+            } else {
+                new ErrorPopupView("Please select a course.").show();
+            }
+        });
 
-        HBox root = new HBox(leftPane, rightPane);
-        scene = new Scene(root, 1000, 600);
+        VBox layout = new VBox(10, welcomeLabel, courseListView, viewCourseButton);
+        layout.setPadding(new Insets(15));
+        scene = new Scene(layout, 800, 600);
     }
 
+    /**
+     * Returns the scene object associated with this view.
+     * @return Scene for the teacher dashboard
+     */
     public Scene getScene() {
         return scene;
-    }
-
-    public void updateCourseList(List<Course> courses) {
-        courseList.getItems().setAll(courses);
-    }
-
-    public void updateStudentTable(List<Student> students) {
-        studentTable.getItems().setAll(students);
-    }
-
-    public void showUngradedAssignments(List<Assignment> ungraded) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Ungraded Assignments");
-        alert.setHeaderText("Assignments needing grading:");
-        StringBuilder sb = new StringBuilder();
-        for (Assignment a : ungraded) {
-            sb.append(a.getTitle()).append("\n");
-        }
-        alert.setContentText(sb.toString());
-        alert.showAndWait();
-    }
-
-    public void showClassStats(double avg, double median) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Class Stats");
-        alert.setHeaderText("Class Average and Median");
-        alert.setContentText("Average: " + avg + "%\nMedian: " + median + "%");
-        alert.showAndWait();
     }
 }
