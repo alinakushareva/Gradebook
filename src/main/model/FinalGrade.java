@@ -28,4 +28,18 @@ public enum FinalGrade {
     public double getGpaValue() {
         return gpaValue;
     }
+    
+    /**
+     * Returns a FinalGrade based on a numeric percentage.
+     * @param percentage Grade percentage (0–100)
+     * @return FinalGrade enum (A–E)
+     */
+    public static FinalGrade getLetterGrade(double percentage) {
+        if (percentage >= 90.0) return FinalGrade.A;
+        else if (percentage >= 80.0) return FinalGrade.B;
+        else if (percentage >= 70.0) return FinalGrade.C;
+        else if (percentage >= 60.0) return FinalGrade.D;
+        else return FinalGrade.E;
+    }
+
 }

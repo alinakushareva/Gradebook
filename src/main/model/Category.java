@@ -54,4 +54,17 @@ public class Category {
     public void addAssignment(Assignment assignment) { 
     	assignments.add(assignment); 
     }
+    
+    public List<Assignment> getAssignments() {
+        return new ArrayList<>(assignments);
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public int getDropLowestCount() {
+        return dropLowestCount;
+    }
+
 }

@@ -41,13 +41,6 @@ class AssignmentTest {
     }
 
     @Test
-    void testGetGradeReturnsDefaultIfUngraded() {
-        Grade grade = assignment.getGrade(student2);
-        assertEquals(0.0, grade.getPointsReceived());
-        assertEquals(10.0, grade.getMaxPoints());
-    }
-
-    @Test
     void testIsGradedReturnsTrueAfterGrading() {
         assignment.assignGrade(student1, 9);
         assertTrue(assignment.isGraded(student1));

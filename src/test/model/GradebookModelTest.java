@@ -75,4 +75,62 @@ class GradebookModelTest {
         assertTrue(allCourses.contains(course2));
         assertEquals(2, allCourses.size());
     }
+    
+    @Test
+    void testCalculateAssignmentMedian_NoGrades() {
+        model.addCourse(course);
+        Assignment a = new Assignment("Midterm", 100);
+        course.addAssignment(a);
+
+        double median = model.calculateAssignmentMedian(course, a);
+        assertEquals(0.0, median);
+    }
+
+    @Test
+    void testCalculateAssignmentMedian_OddNumberOfGrades() {
+        model.addCourse(course);
+        Assignment a = new Assignment("Midterm", 100);
+        course.addAssignment(a);
+
+        Student s1 = new Student("A", "A", "a1", "123");
+        Student s2 = new Student("B", "B", "b2", "123");
+        Student s3 = new Student("C", "C", "c3", "123");
+
+        course.addStudent(s1);
+        course.addStudent(s2);
+        course.addStudent(s3);
+
+        a.assignGrade(s1, 70);
+        a.assignGrade(s2, 85);
+        a.assignGrade(s3, 90);
+
+        double median = model.calculateAssignmentMedian(course, a);
+        assertEquals(85.0, median);
+    }
+
+    @Test
+    void testCalculateAssignmentMedian_EvenNumberOfGrades() {
+        model.addCourse(course);
+        Assignment a = new Assignment("Quiz", 100);
+        course.addAssignment(a);
+
+        Student s1 = new Student("A", "A", "a1", "123");
+        Student s2 = new Student("B", "B", "b2", "123");
+        Student s3 = new Student("C", "C", "c3", "123");
+        Student s4 = new Student("D", "D", "d4", "123");
+
+        course.addStudent(s1);
+        course.addStudent(s2);
+        course.addStudent(s3);
+        course.addStudent(s4);
+
+        a.assignGrade(s1, 60);
+        a.assignGrade(s2, 70);
+        a.assignGrade(s3, 80);
+        a.assignGrade(s4, 90);
+
+        double median = model.calculateAssignmentMedian(course, a);
+        assertEquals(75.0, median); // (70 + 80) / 2
+    }
+
 }

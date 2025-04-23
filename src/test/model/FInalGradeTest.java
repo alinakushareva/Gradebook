@@ -48,4 +48,37 @@ class FinalGradeTest {
     void valueOf_ReturnsCorrectEnumForE() {
         assertSame(FinalGrade.E, FinalGrade.valueOf("E"));
     }
+    
+ // --- Letter Grade Logic Tests ---
+    @Test
+    void getLetterGrade_ReturnsA_For90AndAbove() {
+        assertEquals(FinalGrade.A, FinalGrade.getLetterGrade(90.0));
+        assertEquals(FinalGrade.A, FinalGrade.getLetterGrade(95.5));
+        assertEquals(FinalGrade.A, FinalGrade.getLetterGrade(100.0));
+    }
+
+    @Test
+    void getLetterGrade_ReturnsB_For80To89_99() {
+        assertEquals(FinalGrade.B, FinalGrade.getLetterGrade(80.0));
+        assertEquals(FinalGrade.B, FinalGrade.getLetterGrade(88.9));
+    }
+
+    @Test
+    void getLetterGrade_ReturnsC_For70To79_99() {
+        assertEquals(FinalGrade.C, FinalGrade.getLetterGrade(70.0));
+        assertEquals(FinalGrade.C, FinalGrade.getLetterGrade(75.0));
+    }
+
+    @Test
+    void getLetterGrade_ReturnsD_For60To69_99() {
+        assertEquals(FinalGrade.D, FinalGrade.getLetterGrade(60.0));
+        assertEquals(FinalGrade.D, FinalGrade.getLetterGrade(65.4));
+    }
+
+    @Test
+    void getLetterGrade_ReturnsE_ForBelow60() {
+        assertEquals(FinalGrade.E, FinalGrade.getLetterGrade(59.9));
+        assertEquals(FinalGrade.E, FinalGrade.getLetterGrade(0.0));
+    }
+
 }

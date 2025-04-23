@@ -63,5 +63,32 @@ class CategoryTest {
         double expected = (100.0 + 90.0 + 60.0) / 3 * 0.3;
         assertEquals(expected, avg, 0.01);
     }
+    
+    @Test
+    void testDropLowestCountGreaterThanGrades() {
+        category.setDropLowestCount(5); // More than number of assignments
+        double avg = category.calculateCategoryAverage(student);
+        assertEquals(0.0, avg); // All grades dropped
+    }
+
+    @Test
+    void testGetName_ReturnsCorrectName() {
+        assertEquals("Homework", category.getName());
+    }
+
+    @Test
+    void testGetDropLowestCount_ReturnsCorrectValue() {
+        category.setDropLowestCount(1);
+        assertEquals(1, category.getDropLowestCount());
+    }
+
+    @Test
+    void testGetAssignments_ReturnsCorrectList() {
+        List<Assignment> list = category.getAssignments();
+        assertEquals(3, list.size());
+        assertTrue(list.contains(a1));
+        assertTrue(list.contains(a2));
+        assertTrue(list.contains(a3));
+    }
 
 }
