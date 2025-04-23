@@ -39,6 +39,11 @@ public class Course {
           assignments.add(assignment);
       }
   }
+  
+  public void removeAssignment(Assignment assignment) {
+	    assignments.remove(assignment);
+	}
+
 
   // Grading calculations
   public double calculateClassAverage() {
@@ -57,16 +62,21 @@ public class Course {
   }
 
   private double calculateTotalPointsAverage(Student student) {
-      double totalEarned = assignments.stream()
-          .mapToDouble(a -> a.getGrade(student).getPointsReceived())
-          .sum();
-      
-      double totalPossible = assignments.stream()
-          .mapToDouble(a -> a.getGrade(student).getMaxPoints())
-          .sum();
+	    double totalEarned = assignments.stream()
+	        .map(a -> a.getGrade(student))
+	        .filter(g -> g != null)
+	        .mapToDouble(Grade::getPointsReceived)
+	        .sum();
 
-      return totalPossible > 0 ? (totalEarned / totalPossible) * 100 : 0.0;
-  }
+	    double totalPossible = assignments.stream()
+	        .map(a -> a.getGrade(student))
+	        .filter(g -> g != null)
+	        .mapToDouble(Grade::getMaxPoints)
+	        .sum();
+
+	    return totalPossible > 0 ? (totalEarned / totalPossible) * 100 : 0.0;
+	}
+
 
   private double calculateWeightedAverage(Student student) {
       return categories.stream()

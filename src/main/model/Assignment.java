@@ -39,7 +39,7 @@ public class Assignment {
      * @return Grade object (returns 0/MAX if ungraded)
      */
     public Grade getGrade(Student student) {
-        return studentGrades.getOrDefault(student, new Grade(0, maxPoints));
+    	return studentGrades.get(student);
     }
 
     /**

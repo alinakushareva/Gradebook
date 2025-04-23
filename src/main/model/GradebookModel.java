@@ -54,4 +54,27 @@ public class GradebookModel {
     public List<Course> getAllCourses() {
         return new ArrayList<>(courses.values());
     }
+    
+    public double calculateAssignmentMedian(Course course, Assignment assignment) {
+        List<Double> scores = new ArrayList<>();
+
+        for (Student student : course.getStudents()) {
+            Grade grade = assignment.getGrade(student);
+            if (grade != null) {
+                scores.add(grade.getPointsReceived());
+            }
+        }
+
+        if (scores.isEmpty()) return 0.0;
+
+        scores.sort(Double::compareTo);
+
+        int size = scores.size();
+        if (size % 2 == 1) {
+            return scores.get(size / 2);
+        } else {
+            return (scores.get(size / 2 - 1) + scores.get(size / 2)) / 2.0;
+        }
+    }
+
 }
