@@ -4,6 +4,7 @@
  * Course: CSC 335 Spring 2025
  * Purpose: Provides a reusable modal error dialog for displaying messages to users.
  *          Follows JavaFX best practices for alert dialogs with consistent styling.
+ *          AI generated class!
  */
 package view;
 
