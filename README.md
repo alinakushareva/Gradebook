@@ -126,9 +126,9 @@ We used AI tools exclusively to assist with **frontend layout design in the `vie
 ## 👥 Authors
 
 - Alina Kushareva  
-- [Teammate 2 Name]  
-- [Teammate 3 Name]  
-- [Teammate 4 Name]
+- Jifei Wang 
+- Lanyue Zhang
+- Audrina Campa
 
 ---
 
