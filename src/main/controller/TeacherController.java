@@ -1,3 +1,11 @@
+/**
+ * Project Name: Gradebook
+ * File Name: TeacherController.java
+ * Course: CSC 335 Spring 2025
+ * Purpose: Provides controller logic for teacher-related actions in the gradebook system.
+ *          Allows assignment and grade management, student sorting, and calculations
+ *          like averages, medians, and final grade assignment.
+ */
 package controller;
 
 import model.*;
@@ -84,6 +92,7 @@ public class TeacherController {
     public List<Assignment> getUngradedAssignments(Course course) {
         List<Assignment> ungraded = new ArrayList<>();
         for (Assignment assignment : course.getAssignments()) {
+            // Check if all students have been graded
             if (!assignment.isFullyGraded(course.getStudents())) {
                 ungraded.add(assignment);
             }

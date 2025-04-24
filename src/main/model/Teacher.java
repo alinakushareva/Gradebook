@@ -1,3 +1,11 @@
+/**
+ * Project Name: Gradebook
+ * File Name: Teacher.java
+ * Course: CSC 335 Spring 2025
+ * 
+ * Purpose: Represents a teacher in the gradebook system. 
+ * Allows teachers to manage courses, enroll students, and persist course data.
+ */
 package model;
 
 import java.io.IOException;
@@ -58,9 +66,14 @@ public class Teacher extends User {
         return new ArrayList<>(teachingCourses); // Return a copy for encapsulation
     }
     
+    /**
+     * Creates and adds a new course, then saves it to file.
+     *
+     * @param courseName Name of the course to create
+     */
     public void createCourse(String courseName) {
         Course course = new Course(courseName);
-        this.addCourse(course);
+        this.addCourse(course); // Add course to teacher
         // Persist to file
         try {
             FileUtil.saveCourses(Collections.singletonList(course), "courses.txt");
@@ -69,10 +82,21 @@ public class Teacher extends User {
         }
     }
 
+    /**
+     * Enrolls a student into a course.
+     *
+     * @param course  Course the student is joining
+     * @param student The student to enroll
+     */
     public void enrollStudent(Course course, Student student) {
         course.addStudent(student);
     }
     
+    /**
+     * Formats the teacher object for file persistence.
+     *
+     * @return CSV-style line for file storage
+     */
     @Override
     public String toFileString() {
         return getUsername() + "," + getFirstName() + " " + getLastName() + "," + getPasswordHash() + ",teacher";
