@@ -103,6 +103,10 @@ public abstract class User {
         return passwordHash;
     }
     
+    /**
+     * Converts the user object into a CSV-style string for file storage.
+     * 
+     * @return a comma-separated string containing username, full name, password hash, and role
+     */
     public abstract String toFileString();
-
 }

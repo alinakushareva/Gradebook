@@ -27,6 +27,7 @@ public class FileUtil {
 	public static void saveUsers(List<User> users, String filePath) {
 	    try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
 	        for (User user : users) {
+                // Save user as a comma-separated line
 	            writer.println(user.toFileString());
 	        }
 	    } catch (IOException e) {
@@ -118,6 +119,13 @@ public class FileUtil {
         Files.write(Paths.get(filePath), lines);
     }
     
+    /**
+     * Saves course data to file in CSV format.
+     * Format: CourseName,student1,student2,...
+     * @param courses List of courses to save
+     * @param filePath Output file
+     * @throws IOException if file operations fail
+     */
     public static void saveCourses(List<Course> courses, String filePath) throws IOException {
         List<String> lines = courses.stream()
             .map(c -> c.getCourseName() + "," + String.join(",", 
@@ -127,13 +135,21 @@ public class FileUtil {
             .toList();
         Files.write(Paths.get(filePath), lines);
     }
-
+    
+    /**
+     * Loads course data from a CSV file.
+     * Each line contains course name and enrolled student usernames.
+     * @param filePath Path to saved courses
+     * @param userManager User manager to match usernames to Student objects
+     * @return List of Course objects with student associations
+     * @throws IOException if file operations fail
+     */
     public static List<Course> loadCourses(String filePath, UserManager userManager) throws IOException {
         return Files.readAllLines(Paths.get(filePath)).stream()
             .map(line -> {
                 String[] parts = line.split(",");
-                Course course = new Course(parts[0]);
-                Arrays.stream(parts).skip(1)
+                Course course = new Course(parts[0]); // First token is course name
+                Arrays.stream(parts).skip(1) // Remaining tokens are usernames
                     .forEach(username -> {
                         User user = userManager.findUserByUsername(username);
                         if (user instanceof Student) {

@@ -1,3 +1,11 @@
+/**
+ * Project Name: Gradebook
+ * File Name: StudentController.java
+ * Course: CSC 335 Spring 2025
+ * Purpose: Provides controller logic for student operations.
+ *          Connects the student model to relevant course and grade data,
+ *          enabling the UI to display GPA, course info, and assignment grades.
+ */
 package controller;
 
 import model.*;
