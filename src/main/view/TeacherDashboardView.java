@@ -24,28 +24,28 @@ public class TeacherDashboardView {
         instruction.setStyle("-fx-font-size: 14px;");
 
         // Buttons for navigation
-        Button coursesButton = new Button("📚 Manage Courses");
+        Button coursesButton = new Button(" Manage Courses");
         coursesButton.setPrefWidth(200);
         coursesButton.setOnAction(e -> {
             CourseDetailView view = new CourseDetailView(teacher, model, controller, mainView);
             mainView.setScene(view.getScene());
         });
 
-        Button studentsButton = new Button("👥 Manage Students");
+        Button studentsButton = new Button(" Manage Students");
         studentsButton.setPrefWidth(200);
         studentsButton.setOnAction(e -> {
             StudentManagementView view = new StudentManagementView(teacher, model, controller, mainView);
             mainView.setScene(view.getScene());
         });
 
-        Button assignmentsButton = new Button("📘 Manage Assignments");
+        Button assignmentsButton = new Button(" Manage Assignments");
         assignmentsButton.setPrefWidth(200);
         assignmentsButton.setOnAction(e -> {
             AssignmentManagementView view = new AssignmentManagementView(teacher, model, controller, mainView);
             mainView.setScene(view.getScene());
         });
 
-        Button gradesButton = new Button("📝 Manage Grades");
+        Button gradesButton = new Button(" Manage Grades");
         gradesButton.setPrefWidth(200);
         gradesButton.setOnAction(e -> {
             GradeManagementView view = new GradeManagementView(teacher, model, controller, mainView);
