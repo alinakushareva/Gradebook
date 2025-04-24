@@ -3,7 +3,9 @@ package model;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Course {
+import util.GradeCalculator;
+
+public class Course implements Subject {
 	private final String courseName;
     private final List<Student> students;
     private final List<Assignment> assignments;
@@ -11,6 +13,8 @@ public class Course {
     private final Map<Student, FinalGrade> finalGrades;
     private boolean useWeightedGrading;
     private int numAssignmentsToDrop;
+    private final List<Observer> observers = new ArrayList<>();
+
     
   public Course(String courseName) {
 	  this.courseName = courseName;
@@ -26,22 +30,26 @@ public class Course {
       if (!students.contains(student)) {
           students.add(student);
           student.addCourse(this);
+          notifyObservers();
       }
   }
 
   public void removeStudent(Student student) {
       students.remove(student);
       student.getCourses().remove(this);
+      notifyObservers();
   }
 
   public void addAssignment(Assignment assignment) {
       if (!assignments.contains(assignment)) {
           assignments.add(assignment);
+          notifyObservers();
       }
   }
   
   public void removeAssignment(Assignment assignment) {
 	    assignments.remove(assignment);
+	    notifyObservers();
 	}
 
 
@@ -62,27 +70,44 @@ public class Course {
   }
 
   private double calculateTotalPointsAverage(Student student) {
-	    double totalEarned = assignments.stream()
-	        .map(a -> a.getGrade(student))
-	        .filter(g -> g != null)
-	        .mapToDouble(Grade::getPointsReceived)
-	        .sum();
+	    double totalEarned = 0;
+	    double totalPossible = 0;
 
-	    double totalPossible = assignments.stream()
-	        .map(a -> a.getGrade(student))
-	        .filter(g -> g != null)
-	        .mapToDouble(Grade::getMaxPoints)
-	        .sum();
+	    for (Category category : categories) {
+	        List<Assignment> assignmentsInCat = category.getAssignments();
+	        List<Grade> studentGrades = new ArrayList<>();
 
-	    return totalPossible > 0 ? (totalEarned / totalPossible) * 100 : 0.0;
+	        for (Assignment a : assignmentsInCat) {
+	            Grade g = a.getGrade(student);
+	            if (g != null) {
+	                studentGrades.add(g);
+	            }
+	        }
+	        List<Grade> keptGrades = GradeCalculator.dropLowestGrades(studentGrades, category.getDropLowestCount());
+
+	        for (Grade g : keptGrades) {
+	            totalEarned += g.getPointsReceived();
+	            totalPossible += g.getMaxPoints();
+	        }
+	    }
+
+	    return totalPossible > 0 ? (totalEarned / totalPossible) * 100.0 : 0.0;
 	}
 
 
+
   private double calculateWeightedAverage(Student student) {
-      return categories.stream()
-          .mapToDouble(c -> c.calculateCategoryAverage(student) * c.getWeight())
-          .sum();
-  }
+	    double totalWeight = categories.stream()
+	        .mapToDouble(Category::getWeight)
+	        .sum();
+
+	    if (totalWeight == 0) return 0.0;
+
+	    return categories.stream()
+	        .mapToDouble(cat -> cat.calculateCategoryAverage(student))
+	        .sum();
+	}
+
 
   // Sorting/grouping
   public List<Student> sortStudentsByName() {
@@ -130,8 +155,11 @@ public class Course {
   }
 
   public void assignFinalGrade(Student student, FinalGrade grade) {
-      finalGrades.put(student, grade);
-  }
+	    finalGrades.put(student, grade);
+	    student.assignFinalGrade(this, grade); 
+	    notifyObservers();
+	}
+
 
   public FinalGrade getFinalGrade(Student student) {
       return finalGrades.getOrDefault(student, null);
@@ -140,4 +168,55 @@ public class Course {
   public boolean isCompleted(Student student) {
       return student.getFinalGrade(this) != null;
   }
+  
+  @Override
+  public void addObserver(Observer o) {
+      if (!observers.contains(o)) {
+          observers.add(o);
+      }
+  }
+
+  @Override
+  public void removeObserver(Observer o) {
+      observers.remove(o);
+  }
+
+  @Override
+  public void notifyObservers() {
+      for (Observer o : observers) {
+          o.update();
+      }
+  }
+  
+	//Category Management
+	
+	public boolean addCategory(Category category) {
+	   double currentTotal = categories.stream()
+	           .mapToDouble(Category::getWeight)
+	           .sum();
+	
+	   if (currentTotal + category.getWeight() <= 1.0) {
+	       categories.add(category);
+	       notifyObservers();
+	       return true;
+	   } else {
+	       return false;
+	   }
+	}
+	
+	public boolean removeCategory(String name) {
+	   boolean removed = categories.removeIf(c -> c.getName().equalsIgnoreCase(name));
+	   if (removed) {
+	       notifyObservers();
+	   }
+	   return removed;
+	}
+	
+	public List<Category> getCategories() {
+	   return new ArrayList<>(categories);
+	}
+	
+	public int getAssignmentsToDrop() {
+	   return numAssignmentsToDrop;
+	}
 }

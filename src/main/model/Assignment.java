@@ -12,10 +12,15 @@ public class Assignment {
     private final String title;
     private final double maxPoints;
     private final Map<Student, Grade> studentGrades;
+    private final Course course;
 
-    public Assignment(String title, double maxPoints) {
+    public Assignment(String title, double maxPoints, Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
         this.title = title;
         this.maxPoints = maxPoints;
+        this.course = course;
         this.studentGrades = new HashMap<>();
     }
 
@@ -32,14 +37,15 @@ public class Assignment {
         Grade grade = new Grade(points, maxPoints);
         student.addGrade(this, grade);
         studentGrades.put(student, grade);
+        course.notifyObservers(); // Notify observers after grade change
     }
 
     /**
      * Retrieves a student's grade for this assignment
-     * @return Grade object (returns 0/MAX if ungraded)
+     * @return Grade object or null if not graded
      */
     public Grade getGrade(Student student) {
-    	return studentGrades.get(student);
+        return studentGrades.get(student);
     }
 
     /**
@@ -48,12 +54,11 @@ public class Assignment {
      * @return true if all students have grades
      */
     public boolean isFullyGraded(List<Student> courseStudents) {
-        return courseStudents.stream()
-            .allMatch(studentGrades::containsKey);
+        return courseStudents.stream().allMatch(studentGrades::containsKey);
     }
-    
+
     public boolean isGraded(Student student) {
-        return student.getGrade(this) != null;
+        return studentGrades.containsKey(student);
     }
 
     // Getters
@@ -67,5 +72,9 @@ public class Assignment {
 
     public Map<Student, Grade> getStudentGrades() {
         return new HashMap<>(studentGrades);
+    }
+
+    public Course getCourse() {
+        return course;
     }
 }

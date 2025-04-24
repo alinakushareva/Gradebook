@@ -1,0 +1,18 @@
+package view;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+import model.GradebookModel;
+
+public class MainApp extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        GradebookModel model = new GradebookModel();
+        new MainView(primaryStage, model);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

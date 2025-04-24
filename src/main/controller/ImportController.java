@@ -5,6 +5,8 @@ import model.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +31,22 @@ public class ImportController {
      * @return list of parsed Student objects
      */
     public List<Student> importStudents(String filePath) {
-        List<Student> students = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length >= 4) {
-                    Student student = new Student(parts[1], parts[2], parts[0], parts[3]);
-                    students.add(student);
+        List<Student> imported = new ArrayList<>();
+        try {
+            List<String> usernames = Files.readAllLines(Paths.get(filePath));
+            for (String username : usernames) {
+                User u = model.getStudentByUsername(username.trim());
+                if (u instanceof Student s) {
+                    imported.add(s);
                 }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        return students;
+        return imported;
     }
+
+
 
     /**
      * Validates that the file exists and is readable.

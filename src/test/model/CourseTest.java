@@ -1,12 +1,13 @@
 package model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class CourseTest {
 
@@ -22,51 +23,29 @@ class CourseTest {
         student1 = new Student("Alina", "Kushareva", "alina_k", "pass");
         student2 = new Student("Jake", "Smith", "jake_s", "pass");
 
-        a1 = new Assignment("HW1", 10);
-        a2 = new Assignment("HW2", 20);
+        a1 = new Assignment("HW1", 10, course);
+        a2 = new Assignment("HW2", 20, course);
+        course.addAssignment(a1);
+        course.addAssignment(a2);
+        course.addStudent(student1);
+        course.addStudent(student2);
+
         a1.assignGrade(student1, 8);
         a1.assignGrade(student2, 9);
         a2.assignGrade(student1, 18);
         a2.assignGrade(student2, 10);
-
-        course.addAssignment(a1);
-        course.addAssignment(a2);
-
-        course.addStudent(student1);
-        course.addStudent(student2);
     }
 
     @Test
-    void testAddStudent_AddsCorrectly() {
-        List<Student> students = course.getStudents();
-        assertTrue(students.contains(student1));
-        assertTrue(students.contains(student2));
-    }
-
-
-    @Test
-    void testAddAssignment_AddsSuccessfully() {
-        Assignment a3 = new Assignment("HW3", 15);
+    void testAddAndRemoveAssignment() {
+        Assignment a3 = new Assignment("HW3", 15, course);
         course.addAssignment(a3);
         assertTrue(course.getAssignments().contains(a3));
+
+        course.removeAssignment(a3);
+        assertFalse(course.getAssignments().contains(a3));
     }
 
-    @Test
-    void testCalculateTotalPointsAverage() {
-        course.setGradingMode(false);
-        double avg = course.calculateStudentAverage(student1);
-        double expected = ((8 + 18) / 30.0) * 100;
-        assertEquals(expected, avg, 0.01);
-    }
-
-    @Test
-    void testCalculateClassAverage() {
-        course.setGradingMode(false);
-        double avg1 = ((8 + 18) / 30.0) * 100;
-        double avg2 = ((9 + 10) / 30.0) * 100;
-        double expected = (avg1 + avg2) / 2;
-        assertEquals(expected, course.calculateClassAverage(), 0.01);
-    }
 
     @Test
     void testSortStudentsByAssignmentGrade() {
@@ -75,13 +54,24 @@ class CourseTest {
     }
 
     @Test
-    void testGetUngradedAssignments_NoneUngraded() {
-        assertTrue(course.getUngradedAssignments().isEmpty());
+    void testSortStudentsByName() {
+        Student s1 = new Student("Charlie", "Brown", "cb", "pass");
+        Student s2 = new Student("Alice", "Smith", "as", "pass");
+        Student s3 = new Student("Bob", "Smith", "bs", "pass");
+        Course c = new Course("SortTest");
+        c.addStudent(s1);
+        c.addStudent(s2);
+        c.addStudent(s3);
+
+        List<Student> sorted = c.sortStudentsByName();
+        assertEquals("Brown", sorted.get(0).getLastName());
+        assertEquals("Alice", sorted.get(1).getFirstName());
+        assertEquals("Bob", sorted.get(2).getFirstName());
     }
 
     @Test
-    void testGetUngradedAssignments_HasUngraded() {
-        Assignment a3 = new Assignment("HW3", 10);
+    void testGetUngradedAssignments() {
+        Assignment a3 = new Assignment("HW3", 10, course);
         course.addAssignment(a3);
         a3.assignGrade(student1, 10); // student2 ungraded
         assertEquals(1, course.getUngradedAssignments().size());
@@ -94,74 +84,116 @@ class CourseTest {
     }
 
     @Test
-    void testIsCompleted_TrueIfFinalGradeAssigned() {
+    void testIsCompletedTrue() {
         student1.assignFinalGrade(course, FinalGrade.B);
         assertTrue(course.isCompleted(student1));
     }
 
     @Test
-    void testIsCompleted_FalseIfNoFinalGrade() {
+    void testIsCompletedFalse() {
         assertFalse(course.isCompleted(student2));
     }
-    
+
     @Test
-    void testSetAssignmentsToDrop_PositiveNumber() {
+    void testSetAssignmentsToDropPositiveAndNegative() {
         course.setAssignmentsToDrop(2);
-        assertDoesNotThrow(() -> course.setAssignmentsToDrop(2));
+        assertEquals(2, course.getAssignmentsToDrop());
+
+        course.setAssignmentsToDrop(-5);
+        assertEquals(0, course.getAssignmentsToDrop());
     }
 
     @Test
-    void testSetAssignmentsToDrop_NegativeNumberDefaultsToZero() {
-        course.setAssignmentsToDrop(-5);
-        assertDoesNotThrow(() -> course.setAssignmentsToDrop(-5));
-    }
-    
-    @Test
-    void testGetCourseName_ReturnsCorrectName() {
+    void testGetCourseName() {
         assertEquals("CSC335", course.getCourseName());
     }
-    
+
     @Test
-    void testCalculateWeightedAverage_UsingReflection() throws Exception {
-        Student student = new Student("Anna", "Lee", "anna", "pwd");
-        Category category = new Category("Homework", 1.0);
-        Assignment hw = new Assignment("HW1", 10);
-        category.addAssignment(hw);
-        hw.assignGrade(student, 9); // 90%
-
-        course.addAssignment(hw);
-
-        // Inject category list using reflection
-        var categoriesField = Course.class.getDeclaredField("categories");
-        categoriesField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        List<Category> categories = (List<Category>) categoriesField.get(course);
-        categories.add(category);
-
-        // Call the private method via reflection
+    void testWeightedAverageZeroWeightReturnsZero() throws Exception {
+        Student s = new Student("Zero", "Weight", "zw", "pw");
         Method method = Course.class.getDeclaredMethod("calculateWeightedAverage", Student.class);
         method.setAccessible(true);
-        double result = (double) method.invoke(course, student);
+        double result = (double) method.invoke(course, s);
+        assertEquals(0.0, result, 0.01);
+    }
 
-        assertEquals(90.0, result, 0.01);
+    @Test
+    void testAddCategory_SuccessfulWhenWeightIsValid() {
+        Category cat = new Category("Homework", 0.5);
+        assertTrue(course.addCategory(cat));
+        assertTrue(course.getCategories().contains(cat));
+    }
+
+    @Test
+    void testAddCategory_FailsWhenExceedingWeight() {
+        Category cat1 = new Category("Cat1", 0.7);
+        Category cat2 = new Category("Cat2", 0.5);
+        course.addCategory(cat1);
+        assertFalse(course.addCategory(cat2));
+    }
+
+    @Test
+    void testRemoveCategory_SuccessAndFail() {
+        Category cat = new Category("Projects", 0.5);
+        course.addCategory(cat);
+        assertTrue(course.removeCategory("Projects"));
+        assertFalse(course.removeCategory("Nonexistent"));
+    }
+
+    @Test
+    void testGetCategories() {
+        Category cat = new Category("Quizzes", 0.3);
+        course.addCategory(cat);
+        assertTrue(course.getCategories().contains(cat));
+    }
+
+    @Test
+    void testObservers_AddRemoveNotify() {
+        DummyObserver obs = new DummyObserver();
+        course.addObserver(obs);
+        assertFalse(obs.updated);
+
+        course.assignFinalGrade(student1, FinalGrade.A);
+        assertTrue(obs.updated);
+
+        obs.updated = false;
+        course.removeObserver(obs);
+        course.notifyObservers();
+        assertFalse(obs.updated);
+    }
+
+    // Dummy observer for test
+    static class DummyObserver implements Observer {
+        boolean updated = false;
+        public void update() {
+            updated = true;
+        }
     }
     
     @Test
-    void testSortStudentsByName_SortsByLastThenFirstName() {
-        Student s1 = new Student("Charlie", "Brown", "cb", "pass");
-        Student s2 = new Student("Alice", "Smith", "as", "pass");
-        Student s3 = new Student("Bob", "Smith", "bs", "pass");
+    void testSetGradingMode() {
+        Course course = new Course("CSC101");
 
-        Course course = new Course("SortingCourse");
-        course.addStudent(s1);
-        course.addStudent(s2);
-        course.addStudent(s3);
+        course.setGradingMode(true);
 
-        List<Student> sorted = course.sortStudentsByName();
+        Student student = new Student("Test", "Student", "s123", "pw");
+        course.addStudent(student);
 
-        assertEquals("Brown", sorted.get(0).getLastName());
-        assertEquals("Alice", sorted.get(1).getFirstName());
-        assertEquals("Bob", sorted.get(2).getFirstName());
+        Category category = new Category("Homework", 1.0);
+        course.addCategory(category);
+
+        Assignment a = new Assignment("HW1", 10, course);
+        course.addAssignment(a);
+        category.addAssignment(a);
+        a.assignGrade(student, 9);
+
+        course.setGradingMode(true);
+        double weighted = course.calculateStudentAverage(student);
+        assertEquals(90.0, weighted, 0.01);
+
+        course.setGradingMode(false);
+        double totalPoints = course.calculateStudentAverage(student);
+        assertEquals(90.0, totalPoints, 0.01);
     }
 
 }

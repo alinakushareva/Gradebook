@@ -91,16 +91,11 @@ public class UserManager {
     
     /**
      * Saves users to the file.
-     *
-     * @throws IOException if an error occurs during file writing
      */
     public void saveUsersToFile() {
-        try {
-            FileUtil.saveUsers(users, userFilePath); // Now correctly passes List<User>
-        } catch (IOException e) {
-            System.err.println("Error saving users: " + e.getMessage());
-        }
+        FileUtil.saveUsers(users, userFilePath);
     }
+
     
     /**
      * Finds user by username (case-sensitive)

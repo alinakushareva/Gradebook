@@ -9,7 +9,10 @@ Purpose: Provides file I/O operations for the Gradebook system including user da
 package util;
 
 import model.*;
+
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.*;
 import java.util.*;
 
@@ -21,19 +24,16 @@ public class FileUtil {
      * @param filePath Destination file path
      * @throws IOException if file operations fail
      */
-    public static void saveUsers(List<User> users, String filePath) throws IOException {
-        List<String> lines = new ArrayList<>();
-        // Convert each user to CSV format: username,fullName,passwordHash,role
-        for (User user : users) {
-            lines.add(String.join(",",
-                user.getUsername(),
-                user.getFullName(),
-                user.getPasswordHash(),
-                user.getRole().toLowerCase()
-            ));
-        }
-        Files.write(Paths.get(filePath), lines);
-    }
+	public static void saveUsers(List<User> users, String filePath) {
+	    try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
+	        for (User user : users) {
+	            writer.println(user.toFileString());
+	        }
+	    } catch (IOException e) {
+	        System.err.println("Failed to save users: " + e.getMessage());
+	    }
+	}
+
 
     /**
      * Loads users from a text file and creates User objects
