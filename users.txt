@@ -1,2 +1,0 @@
-test_student,Alice Smith,a109e36947ad56de1dca1cc49f0ef8ac9ad9a7b1aa0df41fb3c4cb73c1ff01ea,student
-teaher,One Two,f225c356597d8ed88481dcea5da55b0e6301a959b503a56a725adb3520f385b8,teacher

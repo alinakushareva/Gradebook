@@ -1,73 +1,63 @@
 package controller;
 
 import model.*;
-import util.SecurityUtil;
 import view.MainView;
 
+/**
+ * Handles authentication and dashboard switching.
+ */
 public class MainController {
 
     private final GradebookModel model;
     private final MainView mainView;
     private User currentUser;
 
-    /**
-     * Constructs the main controller.
-     * @param model the gradebook data model
-     * @param mainView the main view for switching scenes
-     */
     public MainController(GradebookModel model, MainView mainView) {
         this.model = model;
         this.mainView = mainView;
     }
 
     /**
-     * Attempts to authenticate a user based on username and password.
-     * @param username the username entered
-     * @param password the password entered
-     * @return true if authentication is successful, false otherwise
+     * Attempts to log in a user and routes them to the appropriate dashboard.
+     * 
+     * @param username The entered username
+     * @param password The entered password
+     * @return true if login is successful, false otherwise
      */
     public boolean authenticate(String username, String password) {
         if (model.studentExists(username)) {
-            Student s = model.getStudentByUsername(username);
-            if (SecurityUtil.checkPassword(password, s.getPasswordHash())) {
-                currentUser = s;
+            Student student = model.getStudentByUsername(username);
+            if (student.getPasswordHash().equals(password)) {
+                currentUser = student;
+                mainView.showStudentDashboard(student);
                 return true;
             }
         }
+
         if (model.teacherExists(username)) {
-            Teacher t = model.getTeacherByUsername(username);
-            if (SecurityUtil.checkPassword(password, t.getPasswordHash())) {
-                currentUser = t;
+            Teacher teacher = model.getTeacherByUsername(username);
+            if (teacher.getPasswordHash().equals(password)) {
+                currentUser = teacher;
+                mainView.showTeacherDashboard(teacher);
                 return true;
             }
         }
+
         return false;
     }
 
-
-
     /**
-     * Navigates to the appropriate dashboard depending on user role.
-     */
-    public void switchToDashboard() {
-        if (currentUser instanceof Student) {
-            mainView.setScene("studentDashboard");
-        } else if (currentUser instanceof Teacher) {
-            mainView.setScene("teacherDashboard");
-        }
-    }
-
-    /**
-     * Logs out the current user and returns to the login screen.
+     * Logs out the current user and returns to the home screen.
      */
     public void logout() {
         currentUser = null;
-        mainView.setScene("login");
+        mainView.showHomeScreen();
     }
 
     /**
-     * Gets the currently logged-in user.
-     * @return the current user or null
+     * Gets the currently logged-in user (if any).
+     * 
+     * @return User object or null
      */
     public User getCurrentUser() {
         return currentUser;

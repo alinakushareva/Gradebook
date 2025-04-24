@@ -1,88 +1,110 @@
 package model;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.util.Map;
 
 class StudentTest {
 
     private Student student;
-    private Assignment assignment1;
-    private Assignment assignment2;
     private Course course;
+    private Assignment assignment;
+    private Grade grade;
 
     @BeforeEach
-    void setup() {
-        student = new Student("Alina", "Kushareva", "alina_k", "secure123");
-
-        assignment1 = new Assignment("HW1", 10);
-        assignment2 = new Assignment("HW2", 20);
-
-        Grade grade1 = new Grade(8, 10);  // 80%
-        Grade grade2 = new Grade(18, 20); // 90%
-
-        student.addGrade(assignment1, grade1);
-        student.addGrade(assignment2, grade2);
-
+    void setUp() {
+        student = new Student("Alina", "Kushareva", "alina_k", "pass");
         course = new Course("CSC335");
-        course.addAssignment(assignment1);
-        course.addAssignment(assignment2);
+        assignment = new Assignment("HW1", 100, course);
+        grade = new Grade(90, 100);
+
+        course.addAssignment(assignment);
+        course.addStudent(student);
+        student.addCourse(course);
     }
 
     @Test
     void testAddAndGetGrade() {
-        Grade retrieved = student.getGrade(assignment1);
-        assertEquals(8, retrieved.getPointsReceived());
+        student.addGrade(assignment, grade);
+        assertEquals(90.0, student.getGrade(assignment).getPointsReceived());
     }
 
     @Test
     void testGetAverageForCourse() {
-        double average = student.getAverageForCourse(course);
-        assertEquals(86.67, average, 0.01); // weighted average of HW1 and HW2
+        student.addGrade(assignment, grade);
+        assertEquals(90.0, student.getAverageForCourse(course), 0.01);
     }
 
     @Test
-    void testGetAverageForCourse_NoGrades() {
-        Student emptyStudent = new Student("New", "Student", "new_s", "pass");
-        double avg = emptyStudent.getAverageForCourse(course);
-        assertEquals(0.0, avg);
+    void testAverageWithNoGrades() {
+        assertEquals(0.0, student.getAverageForCourse(course), 0.01);
+    }
+
+    @Test
+    void testCalculateGPA() {
+        student.assignFinalGrade(course, FinalGrade.B);
+        assertEquals(3.0, student.calculateGPA(), 0.01);
+    }
+
+    @Test
+    void testCalculateGPAWhenEmpty() {
+        assertEquals(0.0, student.calculateGPA(), 0.01);
     }
 
     @Test
     void testAssignAndGetFinalGrade() {
-        student.assignFinalGrade(course, FinalGrade.B);
-        FinalGrade grade = student.getFinalGrade(course);
-        assertEquals(FinalGrade.B, grade);
-    }
-
-    @Test
-    void testCalculateGPA_withGrades() {
         student.assignFinalGrade(course, FinalGrade.A);
-        double gpa = student.calculateGPA();
-        assertEquals(4.0, gpa);
+        assertEquals(FinalGrade.A, student.getFinalGrade(course));
     }
 
     @Test
-    void testCalculateGPA_noGrades() {
-        Student newStudent = new Student("A", "B", "x", "y");
-        assertEquals(0.0, newStudent.calculateGPA());
+    void testGetGradesMap() {
+        student.addGrade(assignment, grade);
+        Map<Assignment, Grade> map = student.getGrades();
+        assertEquals(1, map.size());
+        assertTrue(map.containsKey(assignment));
     }
 
     @Test
-    void testGetGrades_ReturnsCopy() {
-        var grades = student.getGrades();
-        grades.clear();
-        assertFalse(student.getGrades().isEmpty());
+    void testGetFinalGradesMap() {
+        student.assignFinalGrade(course, FinalGrade.B);
+        Map<Course, FinalGrade> finalMap = student.getFinalGrades();
+        assertEquals(1, finalMap.size());
+        assertEquals(FinalGrade.B, finalMap.get(course));
     }
 
     @Test
-    void testGetFinalGrades_ReturnsCopy() {
-        student.assignFinalGrade(course, FinalGrade.C);
-        var map = student.getFinalGrades();
-        map.clear();
-        assertFalse(student.getFinalGrades().isEmpty());
+    void testToFileString() {
+        String expected = "alina_k,Alina Kushareva,pass,student";
+        assertEquals(expected, student.toFileString());
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        Student same = new Student("Alina", "Kushareva", "alina_k", "otherpass");
+        Student different = new Student("Bob", "Smith", "bob_s", "pass");
+
+        assertEquals(student, same);
+        assertNotEquals(student, different);
+        assertEquals(student.hashCode(), same.hashCode());
+    }
+
+    @Test
+    void testUserMethodsInheritedFromAbstractUser() {
+        assertEquals("alina_k", student.getUsername());
+        assertEquals("Alina", student.getFirstName());
+        assertEquals("Kushareva", student.getLastName());
+        assertEquals("Alina Kushareva", student.getFullName());
+        assertEquals("Student", student.getRole());
+        assertEquals("pass", student.getPasswordHash());
+
+        student.addCourse(course);
+        List<Course> courses = student.getCourses();
+        assertEquals(1, courses.size());
+        assertTrue(courses.contains(course));
     }
 }

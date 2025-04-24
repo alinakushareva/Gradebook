@@ -1,110 +1,78 @@
-/**
- * Project Name: Gradebook
- * File Name: MainView.java
- * Course: CSC 335 Spring 2025
- * Purpose: Root view container that manages all application scenes and handles 
- *          transitions between different views. Maintains a registry of scenes
- *          and coordinates with MainController for navigation.
- */
 package view;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Student;
-import model.Teacher;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.geometry.Insets;
 
-import java.util.HashMap;
-import java.util.Map;
+import model.*;
+import controller.*;
 
 public class MainView {
-    private final Stage primaryStage;
-    private final Map<String, Scene> sceneMap;
-    private Scene currentScene;
 
-    /**
-     * Initializes the MainView with the primary JavaFX stage
-     * @param primaryStage The main application window stage
-     */
-    public MainView(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        this.sceneMap = new HashMap<>();
-        this.currentScene = null;
-        configureStage();
+    private Stage stage;
+    private GradebookModel model;
+    private MainController mainController;
+
+    public MainView(Stage stage, GradebookModel model) {
+        this.stage = stage;
+        this.model = model;
+        this.mainController = new MainController(model, this);
+        showHomeScreen();
     }
 
-    /**
-     * Configures basic stage properties
-     */
-    private void configureStage() {
-        primaryStage.setTitle("Gradebook System");
-        primaryStage.setMinWidth(800);
-        primaryStage.setMinHeight(600);
+    public void showHomeScreen() {
+        VBox root = new VBox(15);
+        root.setPadding(new Insets(40));
+        root.setStyle("-fx-alignment: center");
+
+        Text title = new Text("Gradebook System");
+        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 26));
+
+        Button loginBtn = new Button("Login");
+        loginBtn.setPrefWidth(150);
+        loginBtn.setOnAction(e -> showLoginScreen());
+
+        Button registerBtn = new Button("Register");
+        registerBtn.setPrefWidth(150);
+        registerBtn.setOnAction(e -> showRegistrationScreen());
+
+        root.getChildren().addAll(title, loginBtn, registerBtn);
+
+        stage.setTitle("Gradebook - Home");
+        stage.setScene(new Scene(root, 400, 300));
+        stage.show();
     }
 
-    /**
-     * Registers a scene with a unique identifier
-     * @param sceneName Key to identify the scene
-     * @param scene The Scene object to register
-     */
-    public void registerScene(String sceneName, Scene scene) {
-        sceneMap.put(sceneName, scene);
+    public void showLoginScreen() {
+        LoginView loginView = new LoginView(model, this);
+        stage.setScene(loginView.getScene());
     }
 
-    /**
-     * Switches the current view to a registered scene
-     * @param sceneName The key of the scene to display
-     */
-    public void setScene(String sceneName) {
-        Scene scene = sceneMap.get(sceneName);
-        if (scene != null) {
-            currentScene = scene;
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        }
+    public void showRegistrationScreen() {
+        RegistrationView registrationView = new RegistrationView(model, this);
+        stage.setScene(registrationView.getScene());
     }
 
-    /**
-     * Overloaded version that registers and switches to a scene in one operation
-     * @param sceneName Key to identify the scene
-     * @param scene The Scene object to display
-     */
-    public void setScene(String sceneName, Scene scene) {
-        registerScene(sceneName, scene);
-        setScene(sceneName);
-    }
-
-    /**
-     * Displays an error message to the user
-     * @param message The error message to display
-     */
-    public void showError(String message) {
-        ErrorPopupView errorPopup = new ErrorPopupView(message);
-        errorPopup.show();
-    }
-
-    /**
-     * Gets the currently displayed scene
-     * @return The current Scene object
-     */
-    public Scene getCurrentScene() {
-        return currentScene;
-    }
-
-    /**
-     * Starts the application by showing the initial scene
-     * @param initialSceneName The name of the first scene to display
-     */
-    public void start(String initialSceneName) {
-        setScene(initialSceneName);
-        primaryStage.show();
-    }
-    
     public void showStudentDashboard(Student student) {
-        setScene("studentDashboard");
+        StudentDashboardView dashboardView = new StudentDashboardView(student, model, mainController, this);
+        stage.setScene(dashboardView.getScene());
     }
 
     public void showTeacherDashboard(Teacher teacher) {
-        setScene("teacherDashboard");
+        TeacherDashboardView dashboardView = new TeacherDashboardView(teacher, model, mainController, this);
+        stage.setScene(dashboardView.getScene());
     }
 
+    public void setScene(Scene scene) {
+        stage.setScene(scene);
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
 }

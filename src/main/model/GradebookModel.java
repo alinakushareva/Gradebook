@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GradebookModel {
+public class GradebookModel implements Subject {
     private final Map<String, Student> students;
     private final Map<String, Teacher> teachers;
     private final Map<String, Course> courses;
+    private final List<Observer> observers = new ArrayList<>();
 
     public GradebookModel() {
         this.students = new HashMap<>();
@@ -45,6 +46,7 @@ public class GradebookModel {
     // Course operations
     public void addCourse(Course c) {
         courses.put(c.getCourseName(), c);
+        notifyObservers();
     }
 
     public Course getCourseByName(String name) {
@@ -76,5 +78,28 @@ public class GradebookModel {
             return (scores.get(size / 2 - 1) + scores.get(size / 2)) / 2.0;
         }
     }
+    
+    public List<User> getAllUsers() {
+        List<User> all = new ArrayList<>();
+        all.addAll(students.values());
+        all.addAll(teachers.values());
+        return all;
+    }
 
+    @Override
+    public void addObserver(Observer o) {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer o : observers) {
+            o.update();
+        }
+    }
 }

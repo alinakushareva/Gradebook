@@ -88,8 +88,10 @@ public class Student extends User {
 	 * 
 	 */
 	public void assignFinalGrade(Course course, FinalGrade grade) {
-        finalGrades.put(course, grade);
-    }
+	    finalGrades.put(course, grade);
+
+	}
+
 	
 	/*
 	 * 
@@ -107,5 +109,24 @@ public class Student extends User {
         return new HashMap<>(finalGrades);
     }
     
+    @Override
+    public String toFileString() {
+        return getUsername() + "," + getFirstName() + " " + getLastName() + "," + getPasswordHash() + ",student";
+    }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Student student = (Student) obj;
+        return this.getUsername().equals(student.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return getUsername().hashCode();
+    }
+    
+    
+
 }

@@ -20,20 +20,21 @@ class StudentControllerTest {
     void setup() {
         model = new GradebookModel();
         student = new Student("Alina", "Kushareva", "alina_k", "pass");
+        model.addStudent(student);  // optional depending on usage
         controller = new StudentController(student, model);
 
         course = new Course("CSC335");
-        assignment = new Assignment("HW1", 10);
+        assignment = new Assignment("HW1", 10, course);
 
         course.addStudent(student);
         course.addAssignment(assignment);
-        assignment.assignGrade(student, 9);
+        assignment.assignGrade(student, 9);  // 9/10 → 90%
         student.assignFinalGrade(course, FinalGrade.A);
+        student.getCourses().add(course);
     }
 
     @Test
     void testGetEnrolledCourses() {
-        student.getCourses().add(course);
         List<Course> enrolled = controller.getEnrolledCourses();
         assertTrue(enrolled.contains(course));
     }
@@ -60,5 +61,28 @@ class StudentControllerTest {
     void testGetGrade() {
         Grade grade = controller.getGrade(course, assignment);
         assertEquals(9, grade.getPointsReceived());
+    }
+
+    @Test
+    void testGetGradeReturnsNullIfUnassigned() {
+        Assignment newAssignment = new Assignment("HW2", 10, course);
+        Grade grade = controller.getGrade(course, newAssignment);  // not assigned
+        assertNull(grade);
+    }
+
+    @Test
+    void testCalculateAverageWhenNoGrades() {
+        Course emptyCourse = new Course("EmptyCourse");
+        emptyCourse.addStudent(student);
+        student.getCourses().add(emptyCourse);
+        double avg = controller.calculateAverage(emptyCourse);
+        assertEquals(0.0, avg, 0.01);
+    }
+
+    @Test
+    void testCalculateGPAWhenNoFinalGrades() {
+        Student newStudent = new Student("Alex", "Test", "alex", "pw");
+        StudentController newController = new StudentController(newStudent, model);
+        assertEquals(0.0, newController.calculateGPA(), 0.01);
     }
 }

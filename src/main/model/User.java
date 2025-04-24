@@ -102,4 +102,7 @@ public abstract class User {
     public String getPasswordHash() {
         return passwordHash;
     }
+    
+    public abstract String toFileString();
+
 }

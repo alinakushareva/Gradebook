@@ -1,62 +1,75 @@
+// TeacherDashboardView.java (updated with "Manage Assignments" section)
 package view;
 
-import controller.TeacherController;
+import controller.MainController;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import model.Course;
-import model.Teacher;
+import javafx.scene.layout.*;
+import model.*;
 
-import java.util.List;
-
-/**
- * TeacherDashboardView provides a visual overview for teachers,
- * allowing them to view their courses and access course details.
- */
 public class TeacherDashboardView {
 
-    private final ListView<Course> courseListView = new ListView<>();
-    private final Button viewCourseButton = new Button("View Selected Course");
-    private final Label welcomeLabel = new Label();
     private final Scene scene;
 
-    /**
-     * Constructs the teacher dashboard view.
-     *
-     * @param teacher The currently logged-in teacher
-     * @param controller The controller for teacher operations
-     * @param mainView The main view used for switching scenes
-     */
-    public TeacherDashboardView(Teacher teacher, TeacherController controller, MainView mainView) {
-        welcomeLabel.setText("Welcome, " + teacher.getFullName());
-        welcomeLabel.setFont(new Font(20));
+    public TeacherDashboardView(Teacher teacher, GradebookModel model, MainController controller, MainView mainView) {
+        VBox mainContent = new VBox(20);
+        mainContent.setPadding(new Insets(30));
 
-        // Populate the course list from controller
-        List<Course> courses = controller.getTeachingCourses();
-        courseListView.getItems().setAll(courses);
+        Label welcome = new Label("Welcome, " + teacher.getFirstName() + " " + teacher.getLastName());
+        welcome.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        // Set up button logic to navigate to CourseDetailView
-        viewCourseButton.setOnAction(e -> {
-            Course selectedCourse = courseListView.getSelectionModel().getSelectedItem();
-            if (selectedCourse != null) {
-                CourseDetailView detailView = new CourseDetailView(selectedCourse, controller);
-                mainView.setScene("courseDetail", detailView.getScene());
-            } else {
-                new ErrorPopupView("Please select a course.").show();
-            }
+        Label instruction = new Label("Choose a section to manage your gradebook:");
+        instruction.setStyle("-fx-font-size: 14px;");
+
+        // Buttons for navigation
+        Button coursesButton = new Button("📚 Manage Courses");
+        coursesButton.setPrefWidth(200);
+        coursesButton.setOnAction(e -> {
+            CourseDetailView view = new CourseDetailView(teacher, model, controller, mainView);
+            mainView.setScene(view.getScene());
         });
 
-        VBox layout = new VBox(10, welcomeLabel, courseListView, viewCourseButton);
-        layout.setPadding(new Insets(15));
-        scene = new Scene(layout, 800, 600);
+        Button studentsButton = new Button("👥 Manage Students");
+        studentsButton.setPrefWidth(200);
+        studentsButton.setOnAction(e -> {
+            StudentManagementView view = new StudentManagementView(teacher, model, controller, mainView);
+            mainView.setScene(view.getScene());
+        });
+
+        Button assignmentsButton = new Button("📘 Manage Assignments");
+        assignmentsButton.setPrefWidth(200);
+        assignmentsButton.setOnAction(e -> {
+            AssignmentManagementView view = new AssignmentManagementView(teacher, model, controller, mainView);
+            mainView.setScene(view.getScene());
+        });
+
+        Button gradesButton = new Button("📝 Manage Grades");
+        gradesButton.setPrefWidth(200);
+        gradesButton.setOnAction(e -> {
+            GradeManagementView view = new GradeManagementView(teacher, model, controller, mainView);
+            mainView.setScene(view.getScene());
+        });
+
+        VBox navButtons = new VBox(15, coursesButton, studentsButton, assignmentsButton, gradesButton);
+        navButtons.setAlignment(Pos.CENTER);
+
+        Button logoutBtn = new Button("Logout");
+        logoutBtn.setOnAction(e -> controller.logout());
+        HBox footer = new HBox(logoutBtn);
+        footer.setAlignment(Pos.BOTTOM_RIGHT);
+
+        mainContent.getChildren().addAll(welcome, instruction, navButtons);
+
+        BorderPane layout = new BorderPane();
+        layout.setCenter(mainContent);
+        layout.setBottom(footer);
+        layout.setPadding(new Insets(20));
+
+        this.scene = new Scene(layout, 600, 500);
     }
 
-    /**
-     * Returns the scene object associated with this view.
-     * @return Scene for the teacher dashboard
-     */
     public Scene getScene() {
         return scene;
     }

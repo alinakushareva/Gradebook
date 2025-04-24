@@ -72,4 +72,10 @@ public class Teacher extends User {
     public void enrollStudent(Course course, Student student) {
         course.addStudent(student);
     }
+    
+    @Override
+    public String toFileString() {
+        return getUsername() + "," + getFirstName() + " " + getLastName() + "," + getPasswordHash() + ",teacher";
+    }
+
 }
